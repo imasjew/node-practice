@@ -1,7 +1,14 @@
 const express = require('express');
-const router = require('./router');
+
+// const localRouter = require('./router/local-router');
+const dbRouter = require('./router/db-router');
+
+require('./database/database')
+require('./database/User')
 const app = express();
-app.use('/', router);
+
+// app.use('/', localRouter);
+app.use('/', dbRouter)
 
 const server = app.listen(8081, function () {
 	var port = server.address().port

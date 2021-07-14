@@ -25,17 +25,17 @@ router.post('/register', async (req, res) => {
 	try {
 		accountFile = await getAccount(); // 获取账户列表
 	} catch (errData) {
-		return res.status(403).send(errData);
+		return res.status(403).send({message: errData});
 	}
 	// 查验账号是否合规
 	if (checkDuplication(accountFile.accounts, newAccount)) {
-		return res.status(403).send('账号已存在');
+		return res.status(403).send({message: '账号已存在'});
 	}
 	if (checkName(newAccount.name)) {
-		return res.status(403).send('账号不合规');
+		return res.status(403).send({message: '账号不合规'});
 	}
 	if (checkPswd(newAccount.pswd)) {
-		return res.status(403).send('密码不合规');
+		return res.status(403).send({message: '密码不合规'});
 	}
 	// 通过查验，加入
 	const resultList = dealList(accountFile, newAccount);
@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 		await setAccount(resultList)
 		res.status(200).send('注册成功')
 	} catch {
-		res.status(403).send('服务器异常')
+		res.status(403).send({message: '服务器异常'})
 	}
 })
 router.post('/login', async (req, res) => {
@@ -55,18 +55,18 @@ router.post('/login', async (req, res) => {
 	try {
 		accountFile = await getAccount(); // 打开用户表
 	} catch (errData) {
-		return res.status(403).send(errData);
+		return res.status(403).send({message: errData});
 	}
 	const accountResult = findAccount(accountFile.accounts, newAccount);
 	switch (accountResult) {
 		case 0:
 			return res.status(200).send('server登录成功');
 		case 1:
-			return res.status(403).send('密码错误');
+			return res.status(403).send({message: '密码错误'});
 		case 2:
-			return res.status(403).send('未找到账号');
+			return res.status(403).send({message: '用户不存在，请注册'});
 		default:
-			return res.status(403).send('服务器异常');
+			return res.status(403).send({message: '服务器异常'});
 	}
 })
 
